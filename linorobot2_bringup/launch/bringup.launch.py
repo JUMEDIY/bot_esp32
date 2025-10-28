@@ -22,7 +22,9 @@ from launch.conditions import IfCondition, UnlessCondition
 
 
 def generate_launch_description():
-
+    rviz_config_path = PathJoinSubstitution(
+        [FindPackageShare('linorobot2_description'), 'rviz', 'description.rviz']
+    )
        
     description_launch_path = PathJoinSubstitution(
         [FindPackageShare('linorobot2_description'), 'launch', 'description.launch.py']
@@ -89,6 +91,14 @@ def generate_launch_description():
     
        IncludeLaunchDescription(
             PythonLaunchDescriptionSource(description_launch_path)
+        ),
+       Node(
+            
+            package='rviz2',
+            executable='rviz2',
+            name='rviz2',
+            output='screen',
+            arguments=['-d', rviz_config_path]
         ),
 
         
