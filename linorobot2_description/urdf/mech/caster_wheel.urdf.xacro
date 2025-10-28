@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="caster_wheel" params="side mass base_length wheel_radius wheel_pos_z">
+    <xacro:property name="caster_wheel_radius" value="${wheel_radius}" />
+    <xacro:if value="${side == 'front'}">
+        <xacro:property name="caster_wheel_x" value="${(base_length / 2) - caster_wheel_radius}" />
+    </xacro:if>
+    
+    <xacro:if value="${side == 'rear'}">
+        <xacro:property name="caster_wheel_x" value="${-(base_length / 2) + caster_wheel_radius}" />
+    </xacro:if>
+    
+    <link name="${side}_caster_wheel_link">
+      <visual>
+        <origin xyz="0.0 0 0.0" rpy="-${pi/2} 0  ${pi/2}"/>
+        <geometry>
+           <mesh filename="package://linorobot2_description/urdf/meshes/casterBall_Wheel.stl" scale="0.0015 0.0015 0.0015"/>
+        </geometry>
+        <material name="caster_black">
+            <color rgba="0.95 0.95 0.95 1.0"/>
+        </material>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <sphere radius="${caster_wheel_radius}" />
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+        <inertia ixx="${(2/5) * mass * (caster_wheel_radius * caster_wheel_radius)}" ixy="0" ixz="0"
+                 iyy="${(2/5) * mass * (caster_wheel_radius * caster_wheel_radius)}" iyz="0"
+                 izz="${(2/5) * mass * (caster_wheel_radius * caster_wheel_radius)}" />
+      </inertial>
+    </link>
+
+    <gazebo reference="${side}_caster_wheel_link">
+        <mu1>0.01</mu1>
+        <mu2>0.01</mu2>
+    </gazebo>
+
+    <joint name="${side}_caster_wheel_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="${side}_caster_wheel_link"/>
+      <origin xyz="-0.05 0 -0.038" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>
